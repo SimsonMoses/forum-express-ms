@@ -1,0 +1,32 @@
+{
+  "name": "forum-be-ms",
+  "version": "1.0.0",
+  "description": "forum express backend service",
+  "main": "server.js",
+  "type":"module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "dotenv -e .env nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SimsonMoses/forum-express-ms.git"
+  },
+  "keywords": [
+    "express",
+    "nodejs",
+    "backend"
+  ],
+  "author": "simsonmoses",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SimsonMoses/forum-express-ms/issues"
+  },
+  "homepage": "https://github.com/SimsonMoses/forum-express-ms#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
