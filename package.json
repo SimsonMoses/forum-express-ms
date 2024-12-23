@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "forum express backend service",
   "main": "server.js",
-  "type":"module",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "dotenv -e .env nodemon server.js"
@@ -24,7 +24,12 @@
   },
   "homepage": "https://github.com/SimsonMoses/forum-express-ms#readme",
   "dependencies": {
-    "express": "^4.21.2"
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-async-handler": "^1.2.0",
+    "mysql2": "^3.11.5",
+    "sequelize": "^6.37.5",
+    "sequelize-cli": "^6.6.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
