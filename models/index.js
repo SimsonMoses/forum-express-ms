@@ -3,6 +3,9 @@ import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import Sequelize from 'sequelize';
 import configFile from '../config/config.js';
+import User from './user.js';
+import Category from './category.js';
+
 
 const db = {};
 
@@ -33,9 +36,7 @@ const loadModels = async () => {
       file !== path.basename(__filename)
     ) {
       const modelPath = pathToFileURL(path.join(__dirname, file)).href;
-      const model = (await import(modelPath)).default(sequelize, Sequelize.DataTypes);
-      console.log(model);
-      
+      const model = (await import(modelPath)).default(sequelize, Sequelize.DataTypes);      
       db[model.name] = model;
     }
   }
@@ -49,7 +50,14 @@ const loadModels = async () => {
 
 await loadModels();
 
+db.User = db.User || db['User'];
+db.Category = db.Category || db['Category'];
+
+db.User.hasMany(db.Category, { foreignKey: 'userId', as: 'categories' });
+db.Category.belongsTo(db.User, { foreignKey: 'userId', as: 'user' });
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
 
 export default db;

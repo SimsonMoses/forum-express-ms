@@ -1,8 +1,9 @@
 import expressAsyncHandler from 'express-async-handler';
 import db from '../../models/index.js';
 import jwt from 'jsonwebtoken';
+import { Sequelize } from 'sequelize';
 
-const { User } = db;
+const { User, sequelize } = db;
 
 export const createUser = expressAsyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
@@ -48,27 +49,88 @@ export const me = expressAsyncHandler(async (req, res) => {
     const { userId } = req.user;
     const user = await User.findOne({
         where: {
-            id:userId
+            id: userId
         }
     })
     if (!user) {
         res.status(404)
         throw new Error('User not found');
     }
-    const userResponse = {
+    res.status(200).json({
+        message: 'User Data',
+        data: convertToUserResponse(user)
+    })
+})
+
+const convertToUserResponse = user => {
+    return {
         userId: user.id,
         name: user.name,
         email: user.email,
         avatar: user.avatar
     }
+}
+
+const convertToUserResponses = users => {
+    return users.map(user => convertToUserResponse(user));
+}
+
+/**
+ * fetchUserById 
+ */
+export const fetchUserById = expressAsyncHandler(async (req, res) => {
+    const id = req.params.id;
+    const user = await User.findOne({
+        where: {
+            id
+        }
+    })
+    if (!user) {
+        res.status(404);
+        throw new Error('User not found');
+    }
     res.status(200).json({
         message: 'User Data',
-        data: userResponse
+        data: convertToUserResponse(user)
     })
 })
 
-//TODO: GET PROFILE
-
-//TODO; GET ALL USERS
+/**
+ * fetchUsers, params: search, limit, offset
+ */
+export const fetchUsers = expressAsyncHandler(async (req, res) => {
+    const { search, limit = 10, offset = 0 } = req.query;
+    
+    const users = await User.findAll({
+        where: sequelize.where(
+            sequelize.fn('lower', sequelize.col('name')),
+            'LIKE',
+            `%${search.toLowerCase()}%`
+        ),
+        limit: +limit,
+        offset: +offset
+    });
+    res.status(200).json({
+        message: 'Users Data',
+        data: convertToUserResponses(users)
+    })
+})
 
 // TODO: UPDATE PROFILE
+export const updateProfile = expressAsyncHandler(async (req,res)=>{
+    const {id} = req.user;
+    const {name, email, avatar,category} = req.body;
+    const user = await User.findOne({
+        id
+    })
+    if(!user){
+        throw new Error('User not found');
+    }
+    user.name = name;
+    user.avatar = avatar;
+    user.category = category;
+    await user.save();
+    res.status(200).json({
+        message: 'Profile updated successfully'
+    })
+})

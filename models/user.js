@@ -7,6 +7,7 @@ export default (sequelize, DataTypes) => {
         static async verifyPassword(password, hashPassword){
             return await bcrypt.compare(password, hashPassword);
         }
+        
     }
     User.init(
         {
@@ -20,7 +21,10 @@ export default (sequelize, DataTypes) => {
             },
             email: {
                 type: DataTypes.STRING,
-                unique: true,
+                unique: {
+                    name: 'unique_email_constraint',
+                    msg: 'Email must be unique'
+                },
                 allowNull: false,
                 validate: {
                     isEmail: true
@@ -32,6 +36,10 @@ export default (sequelize, DataTypes) => {
             },
             avatar: {
                 type: DataTypes.STRING,
+                allowNull: true
+            },
+            category: {
+                type: [DataTypes.INTEGER],
                 allowNull: true
             }
         }, {

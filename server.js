@@ -1,8 +1,10 @@
 import express from 'express';
-import userRouter from './routes/user.js';
+import userRouter from './routes/userRoute.js';
 import db from './models/index.js'
 import {errorHandler} from './middleware/errorHandler.js';
 import { authenticationHandler } from './middleware/authentication.js';
+import importCategoriesFromExcel from './seeders/category/category_insertion.js';
+import { syncDatabase } from './seeders/category/index.js';
 
 const app = express();
 
@@ -26,6 +28,7 @@ const loadSequelize = async () => {
     sequelize.sync({ alter: true }) // Use `alter: true` to make minor changes to the table structure
         .then(() => {
             console.log('Database synchronized successfully.');
+            syncDatabase();
         })
         .catch(error => {
             console.error('Error synchronizing database:', error);
@@ -35,4 +38,5 @@ const loadSequelize = async () => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
     loadSequelize();
+
 })
