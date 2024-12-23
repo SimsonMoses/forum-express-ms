@@ -1,6 +1,6 @@
 
 /**
-Error handler middleware is used to catch any error that occurs in the application.
+    Error handler middleware is used to catch any error that occurs in the application.
 **/
 export const errorHandler = (err,req,res,next)=>{
     console.error(err);

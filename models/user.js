@@ -1,9 +1,13 @@
 import { DataTypes, Model } from 'sequelize';
-
+import bcrypt from 'bcrypt';
 // association
 
-export default  (sequelize, DataTypes) => {
-    class User extends Model { }
+export default (sequelize, DataTypes) => {
+    class User extends Model { 
+        static async verifyPassword(password, hashPassword){
+            return await bcrypt.compare(password, hashPassword);
+        }
+    }
     User.init(
         {
             id: {
@@ -35,6 +39,23 @@ export default  (sequelize, DataTypes) => {
         modelName: 'User',
         tableName: 'users',
         timestamps: true,
+        hooks: {
+            // ** Hashing password before creating user
+            beforeCreate: async (user) => {
+                if (user.password) {
+                    const salt = await bcrypt.genSalt(10);
+                    user.password = await bcrypt.hash(user.password, salt);
+                }
+            },
+            // ** Hashing password before updating user
+            beforeUpdate: async (user) => {
+                if (user.changed('password')) {
+                    const salt = await bcrypt.getSalt(10);
+                    user.password = await bcrypt.hash(user.password, salt);
+                }
+            }
+
+        }
     }
     )
     return User;

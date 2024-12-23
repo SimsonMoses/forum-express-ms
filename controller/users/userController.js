@@ -2,6 +2,7 @@ import expressAsyncHandler from 'express-async-handler';
 import db from '../../models/index.js';
 
 const {User} = db;
+
 export const createUser = expressAsyncHandler(async (req,res)=>{
     const {name,email,password} = req.body;
     const user = await User.create({
@@ -12,3 +13,14 @@ export const createUser = expressAsyncHandler(async (req,res)=>{
         id:user.id
     })
 })
+
+// TODO: LOGIN
+
+
+// TOOD: ME
+
+//TODO: GET PROFILE
+
+//TODO; GET ALL USERS
+
+// TODO: UPDATE PROFILE
