@@ -2,6 +2,7 @@ import express from 'express';
 import userRouter from './routes/user.js';
 import db from './models/index.js'
 import {errorHandler} from './middleware/errorHandler.js';
+import { authenticationHandler } from './middleware/authentication.js';
 
 const app = express();
 

@@ -13,6 +13,10 @@ export const errorHandler = (err,req,res,next)=>{
             message= err.errors[0].message,
             stackTrace= process.env.NODE_ENV === 'production' ? '' : err;
             break;
+        case 'Error':
+            message= err.message,
+            stackTrace= process.env.NODE_ENV === 'production' ? '' : err;
+            break;
         default:
             res.status(500)
             message= err.message || 'Something went wrong';
