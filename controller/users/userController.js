@@ -100,7 +100,7 @@ export const fetchUserById = expressAsyncHandler(async (req, res) => {
  */
 export const fetchUsers = expressAsyncHandler(async (req, res) => {
     const { search, limit = 10, offset = 0 } = req.query;
-    
+
     const users = await User.findAll({
         where: sequelize.where(
             sequelize.fn('lower', sequelize.col('name')),
@@ -117,19 +117,29 @@ export const fetchUsers = expressAsyncHandler(async (req, res) => {
 })
 
 // TODO: UPDATE PROFILE
-export const updateProfile = expressAsyncHandler(async (req,res)=>{
-    const {id} = req.user;
-    const {name, email, avatar,category} = req.body;
+export const updateProfile = expressAsyncHandler(async (req, res) => {
+    const { id } = req.user;
+    const { name, email, avatar, categoryIds } = req.body;
     const user = await User.findOne({
         id
     })
-    if(!user){
+    if (!user) {
         throw new Error('User not found');
     }
     user.name = name;
     user.avatar = avatar;
-    user.category = category;
     await user.save();
+    // Clear existing associations
+    await db.CategoryAssociation.destroy({
+        where: { userId: user.id }
+    });
+
+    // Add new associations
+    const newAssociations = categoryIds.map(categoryId => ({
+        userId: user.id,
+        categoryId: categoryId, // categoryIds is an array like [35, 36, 37]
+    }));
+    await db.CategoryAssociation.bulkCreate(newAssociations);
     res.status(200).json({
         message: 'Profile updated successfully'
     })

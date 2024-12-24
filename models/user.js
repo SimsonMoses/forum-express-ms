@@ -37,10 +37,6 @@ export default (sequelize, DataTypes) => {
             avatar: {
                 type: DataTypes.STRING,
                 allowNull: true
-            },
-            category: {
-                type: [DataTypes.INTEGER],
-                allowNull: true
             }
         }, {
         sequelize,
