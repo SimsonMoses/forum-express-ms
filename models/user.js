@@ -7,7 +7,6 @@ export default (sequelize, DataTypes) => {
         static async verifyPassword(password, hashPassword){
             return await bcrypt.compare(password, hashPassword);
         }
-        
     }
     User.init(
         {

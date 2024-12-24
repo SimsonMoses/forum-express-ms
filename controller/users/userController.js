@@ -2,6 +2,7 @@ import expressAsyncHandler from 'express-async-handler';
 import db from '../../models/index.js';
 import jwt from 'jsonwebtoken';
 import { Sequelize } from 'sequelize';
+import category from '../../models/category.js';
 
 const { User, sequelize } = db;
 
@@ -67,7 +68,8 @@ const convertToUserResponse = user => {
         userId: user.id,
         name: user.name,
         email: user.email,
-        avatar: user.avatar
+        avatar: user.avatar,
+        category: user.category
     }
 }
 
@@ -80,7 +82,7 @@ const convertToUserResponses = users => {
  */
 export const fetchUserById = expressAsyncHandler(async (req, res) => {
     const id = req.params.id;
-    const user = await User.findOne({
+    let user = await User.findOne({
         where: {
             id
         }
@@ -89,6 +91,16 @@ export const fetchUserById = expressAsyncHandler(async (req, res) => {
         res.status(404);
         throw new Error('User not found');
     }
+    let cateogry = await user.getCategories();
+    cateogry = cateogry.map(category => {
+        return {
+            categoryId: category.dataValues.id,
+            categoryName: category.dataValues.name
+        }
+    });
+    console.log(cateogry);
+    user.category = cateogry;
+
     res.status(200).json({
         message: 'User Data',
         data: convertToUserResponse(user)
