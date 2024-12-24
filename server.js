@@ -35,8 +35,17 @@ const loadSequelize = async () => {
         });
 }
 
-app.listen(port, () => {
+let server = app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
     loadSequelize();
 
 })
+
+server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+      console.error(`Port ${port} is already in use.`);
+      process.exit(1); // Exit the application
+    } else {
+      console.error('Server error:', error);
+    }
+  });

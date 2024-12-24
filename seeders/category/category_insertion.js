@@ -2,7 +2,8 @@ import xlsx from 'xlsx';
 import db from '../../models/index.js';
 import path from 'path';
 import url from 'url';
-import fs from 'fs/promises';
+import { Sequelize } from 'sequelize';
+import category from '../../models/category.js';
 
 const importCategoriesFromExcel = async () => {
     console.log('Importing Categories');
@@ -17,12 +18,23 @@ const importCategoriesFromExcel = async () => {
         const sheet = workbook.Sheets[sheetName];
 
         const categoriesData = xlsx.utils.sheet_to_json(sheet);
-
-        const categories = categoriesData.map(row => ({
-            name: row.value,
-        }))
-
-        await db.Category.bulkCreate(categories);
+        const newCategoriesName = categoriesData.map(row => row.value);
+        
+        const Op = Sequelize.Op;
+        let categories = await db.Category.findAll({
+            where: {
+                name:{
+                    [Op.in]: newCategoriesName
+                }
+            },
+            attributes: ['name']
+        });
+        let categoriesNames = categories.map(category => category.name);
+        let newcategories = categoriesData.filter(category => !categoriesNames.includes(category.value)).map(category=>({name: category.value}));
+        if(newcategories.length != 0){
+            await db.Category.bulkCreate(newcategories);
+            console.log('Categories Imported');
+        }
     } catch (error) {
         console.error('Error importing categories:', error);
     }

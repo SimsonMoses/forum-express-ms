@@ -52,9 +52,22 @@ await loadModels();
 
 db.User = db.User || db['User'];
 db.Category = db.Category || db['Category'];
+db.CategoryAssociation = db.CategoryAssociation || db['CategoryAssociation'];
 
-db.User.hasMany(db.Category, { foreignKey: 'userId', as: 'categories' });
-db.Category.belongsTo(db.User, { foreignKey: 'userId', as: 'user' });
+db.User.belongsToMany(db.Category, {
+  through: db.CategoryAssociation,
+  foreignKey: 'userId',
+  otherKey: 'categoryId',
+  as: 'categories',
+});
+
+db.Category.belongsToMany(db.User, {
+  through: db.CategoryAssociation,
+  foreignKey: 'categoryId',
+  otherKey: 'userId',
+  as: 'users',
+});
+
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
