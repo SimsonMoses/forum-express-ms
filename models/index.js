@@ -53,6 +53,7 @@ await loadModels();
 db.User = db.User || db['User'];
 db.Category = db.Category || db['Category'];
 db.CategoryAssociation = db.CategoryAssociation || db['CategoryAssociation'];
+db.Forum = db.Forum || db['Forum'];
 
 db.User.belongsToMany(db.Category, {
   through: db.CategoryAssociation,
@@ -67,7 +68,7 @@ db.Category.belongsToMany(db.User, {
   otherKey: 'userId',
   as: 'users',
 });
-
+db.Forum.belongsTo(db.User, { foreignKey: 'createdBy', as: 'creator' });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

@@ -1,5 +1,4 @@
 import { DataTypes, Model } from "sequelize";
-import user from "./user.js";
 
 export default (sequelize,DataTypes)=>{
     class Forum extends Model {
