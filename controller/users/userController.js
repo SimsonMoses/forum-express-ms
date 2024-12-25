@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { Sequelize } from 'sequelize';
 import category from '../../models/category.js';
 
-const { User, sequelize } = db;
+const { User, sequelize,Category } = db;
 
 export const createUser = expressAsyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
@@ -69,7 +69,7 @@ const convertToUserResponse = user => {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
-        category: user.category
+        category: user.categories
     }
 }
 
@@ -85,21 +85,29 @@ export const fetchUserById = expressAsyncHandler(async (req, res) => {
     let user = await User.findOne({
         where: {
             id
-        }
+        },
+        include:[
+            {
+                model: Category,
+                as: 'categories',
+                attributes: ['id', 'name'],
+                through:{attributes:[]}
+            }
+        ]
     })
     if (!user) {
         res.status(404);
         throw new Error('User not found');
     }
-    let cateogry = await user.getCategories();
-    cateogry = cateogry.map(category => {
-        return {
-            categoryId: category.dataValues.id,
-            categoryName: category.dataValues.name
-        }
-    });
-    console.log(cateogry);
-    user.category = cateogry;
+    // let cateogry = await user.getCategories();
+    // cateogry = cateogry.map(category => {
+    //     return {
+    //         categoryId: category.dataValues.id,
+    //         categoryName: category.dataValues.name
+    //     }
+    // });
+    // console.log(cateogry);
+    // user.category = cateogry;
 
     res.status(200).json({
         message: 'User Data',

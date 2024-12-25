@@ -2,14 +2,22 @@ import expressAsyncHandler from "express-async-handler";
 import db from "../../models/index.js";
 import { Sequelize,Op } from "sequelize";
 
-const {User, Forum, sequelize } = db;
+const {User, Forum, sequelize, ForumCategory,Category } = db;
 
 export const createForum = expressAsyncHandler(async (req, res) => {
     const { userId } = req.user;
-    const { name, imageUrl, description, terms } = req.body;
+    const { name, imageUrl, description, terms, categoryIds } = req.body;
     const forum = await Forum.create({
         name, imageUrl, description, terms, createdBy: userId
     })
+    // category association
+    const newAssociation = categoryIds.map(categoryId=>{
+        return {
+            forumId: forum.id,
+            categoryId
+        }
+    })
+    await ForumCategory.bulkCreate(newAssociation);
     res.status(200)
     return res.json({
         message: `Forum created successfully`,
@@ -57,7 +65,13 @@ export const fetchAllOwnedForum = async (req, res) => {
                 model:User,
                 as: 'creator',
                 attributes: ['id','email']
-            }
+            },
+            {
+                model: Category,
+                as: 'categories', // Alias defined in the association
+                attributes: ['id', 'name'], // Select only the fields you need
+                through: { attributes: [] } // which prevents the join table attributes
+            },
         ]
     })
     return res.status(200).json({
@@ -66,7 +80,9 @@ export const fetchAllOwnedForum = async (req, res) => {
     })
 }
 
-// if need to restrict the forum object to user
+/** Forum Object
+ * Data Transfer Method to restrict the data to be sent to the client
+*/
 const convertForumResponse = (forum)=>{
     return {
         id:forum.id,
@@ -75,8 +91,13 @@ const convertForumResponse = (forum)=>{
         description:forum.description,
         terms:forum.terms,
         creator: forum.creator,
+        categories: forum.categories
     }
 }
+
+/** Forum List Object
+ * Data Transfer Method to restrict the data to be sent to the client
+ */
 
 const convertForumResponses = (forums)=>{
     return forums.map(forum=>convertForumResponse(forum))
