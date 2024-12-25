@@ -31,7 +31,7 @@ export const fetchAllForum = expressAsyncHandler(async (req, res) => {
     });
     res.status(200).json({
         message: 'forum retrived successfully',
-        data: forums
+        data: convertForumResponses(forums)
     })
 })
 
@@ -62,8 +62,24 @@ export const fetchAllOwnedForum = async (req, res) => {
     })
     return res.status(200).json({
         message:'My Forum retrived successfully',
-        data:forums
+        data:convertForumResponses(forums)
     })
+}
+
+// if need to restrict the forum object to user
+const convertForumResponse = (forum)=>{
+    return {
+        id:forum.id,
+        name:forum.name,
+        imageUrl:forum.imageUrl,
+        description:forum.description,
+        terms:forum.terms,
+        creator: forum.creator,
+    }
+}
+
+const convertForumResponses = (forums)=>{
+    return forums.map(forum=>convertForumResponse(forum))
 }
 
 // todo: get all forum based on the sector

@@ -3,8 +3,6 @@ import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import Sequelize from 'sequelize';
 import configFile from '../config/config.js';
-import User from './user.js';
-import Category from './category.js';
 
 
 const db = {};
@@ -27,15 +25,22 @@ if (config.use_env_variable) {
 }
 
 // Dynamically import models
-const loadModels = async () => {
-  const files = fs.readdirSync(__dirname);
+const loadModels = async (dir = __dirname) => {
+  const files = fs.readdirSync(dir);
   for (const file of files) {
+
+    const fullPath = path.join(dir, file);
+
+    if (fs.statSync(fullPath).isDirectory()) {
+      await loadModels(fullPath);  // Recurse into subdirectory
+    }
+
     if (
       file.indexOf('.') !== 0 &&
       file.slice(-3) === '.js' &&
       file !== path.basename(__filename)
     ) {
-      const modelPath = pathToFileURL(path.join(__dirname, file)).href;
+      const modelPath = pathToFileURL(fullPath).href;
       const model = (await import(modelPath)).default(sequelize, Sequelize.DataTypes);      
       db[model.name] = model;
     }
@@ -69,7 +74,6 @@ db.Category.belongsToMany(db.User, {
   as: 'users',
 });
 db.Forum.belongsTo(db.User, { foreignKey: 'createdBy', as: 'creator' });
-
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
