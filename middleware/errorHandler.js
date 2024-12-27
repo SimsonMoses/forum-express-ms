@@ -17,6 +17,10 @@ export const errorHandler = (err,req,res,next)=>{
             message= err.message,
             stackTrace= process.env.NODE_ENV === 'production' ? '' : err;
             break;
+        case 'TokenExpiredError':
+            res.status(401);
+            message = 'token expired';
+            break;
         default:
             res.status(500)
             message= err.message || 'Something went wrong';

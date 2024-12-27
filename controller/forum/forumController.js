@@ -45,7 +45,7 @@ export const fetchAllForum = expressAsyncHandler(async (req, res) => {
 
 // todo: get all forum of mine
 export const fetchAllOwnedForum = async (req, res) => {
-    const { search, limit, offset } = req.query;
+    const { search="", limit, offset } = req.query;
     const {userId} = req.user;
     console.log(Op); // Should log the Sequelize operators
     let forums = await Forum.findAll({
@@ -70,7 +70,10 @@ export const fetchAllOwnedForum = async (req, res) => {
                 model: Category,
                 as: 'categories', // Alias defined in the association
                 attributes: ['id', 'name'], // Select only the fields you need
-                through: { attributes: [] } // which prevents the join table attributes
+                through: { attributes: [] }, // which prevents the join table attributes
+                order: [
+                    ['name', 'ASC'] // testing
+                ]
             },
         ]
     })
@@ -103,9 +106,32 @@ const convertForumResponses = (forums)=>{
     return forums.map(forum=>convertForumResponse(forum))
 }
 
-// todo: get all forum based on the sector
+// todo: get all forum based on the category
+export const fetchForumByCategory = async (req,res)=>{
+    const {categoryId=[]} = req.query;
+    // const categoryId = [37,38];
+    const categoryIds = Array.isArray(categoryId)?categoryId.map(Nummber):categoryId.split(',').map(Number);
+    const forums = await Forum.findAll({
+        include:[
+            {
+                model:Category,
+                as: 'categories',
+                attributes: ['id','name'],
+                through: { attributes: [] },
+                where:{
+                    id: {[Op.in]:categoryIds}
+                }
+            }
+        ]
+    })
+    return res.status(200).json({
+        message:'Forum retrieved successfully',
+        data:convertForumResponses(forums)
+    })
+}
 
 // todo: get forum by id
+
 
 // todo: update forum
 
