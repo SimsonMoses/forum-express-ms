@@ -27,13 +27,31 @@ export const createForum = expressAsyncHandler(async (req, res) => {
 
 // todo: get all forum (filter )
 export const fetchAllForum = expressAsyncHandler(async (req, res) => {
-    const { limit = 10, offset = 0, search = '', } = req.query;
+    const { limit = 10, offset = 0, search = '', categoryId=[]} = req.query;
+    const categoryIds = Array.isArray(categoryId)? categoryId.map(Number) : categoryId.split(',').map(Number);
+
+    const categoryCondition = {
+        model: Category,
+        as: 'categories',
+        attributes: ['id','name'],
+        through: { attributes: []}
+    }
+
+    if(categoryId && categoryIds.length>0){
+        console.log('category id passed');
+        categoryCondition.where = {
+            id: {[Op.in]: categoryIds}        
+        }
+    }
     let forums = await Forum.findAll({
         where: sequelize.where(
             sequelize.fn('lower', sequelize.col('name')),
             'LIKE',
             `%${search.toLowerCase()}%`
         ),
+        include:[
+            categoryCondition
+        ],
         limit: +limit,
         offset: +offset
     });
@@ -45,7 +63,20 @@ export const fetchAllForum = expressAsyncHandler(async (req, res) => {
 
 // todo: get all forum of mine
 export const fetchAllOwnedForum = async (req, res) => {
-    const { search="", limit, offset } = req.query;
+    const { search="", limit, offset,categoryId=[] } = req.query;
+    const categoryIds = Array.isArray(categoryId)? categoryId.map(Number) : categoryId.split(',').map(Number);
+    const categoryCondition = {
+        model: Category,
+        as: 'categories', // Alias defined in the association
+        attributes: ['id', 'name'], // Select only the fields you need
+        through: { attributes: [] }, // which prevents the join table attributes
+    }
+    if(categoryId && categoryIds.length>0){
+        console.log('category id passed');
+        categoryCondition.where = {
+            id: { [Op.in]: categoryIds }
+        }
+    }
     const {userId} = req.user;
     console.log(Op); // Should log the Sequelize operators
     let forums = await Forum.findAll({
@@ -66,15 +97,7 @@ export const fetchAllOwnedForum = async (req, res) => {
                 as: 'creator',
                 attributes: ['id','email']
             },
-            {
-                model: Category,
-                as: 'categories', // Alias defined in the association
-                attributes: ['id', 'name'], // Select only the fields you need
-                through: { attributes: [] }, // which prevents the join table attributes
-                order: [
-                    ['name', 'ASC'] // testing
-                ]
-            },
+            categoryCondition
         ]
     })
     return res.status(200).json({
@@ -107,28 +130,32 @@ const convertForumResponses = (forums)=>{
 }
 
 // todo: get all forum based on the category
-export const fetchForumByCategory = async (req,res)=>{
+export const fetchForumByCategory = expressAsyncHandler(async (req,res)=>{
     const {categoryId=[]} = req.query;
     // const categoryId = [37,38];
-    const categoryIds = Array.isArray(categoryId)?categoryId.map(Nummber):categoryId.split(',').map(Number);
+    const categoryIds = Array.isArray(categoryId)?categoryId.map(Number):categoryId.split(',').map(Number);
+    let categoryCondition = {
+        model: Category,
+        as: 'categories',
+        attributes: ['id', 'name'],
+        through: { attributes: [] },
+    }
+    if(categoryId && categoryIds.length>0){
+        console.log('category id passed');
+        categoryCondition.where = {
+            id: {[Op.in]:categoryIds}
+        };
+    }
     const forums = await Forum.findAll({
         include:[
-            {
-                model:Category,
-                as: 'categories',
-                attributes: ['id','name'],
-                through: { attributes: [] },
-                where:{
-                    id: {[Op.in]:categoryIds}
-                }
-            }
+            categoryCondition
         ]
     })
     return res.status(200).json({
         message:'Forum retrieved successfully',
         data:convertForumResponses(forums)
     })
-}
+})
 
 // todo: get forum by id
 
