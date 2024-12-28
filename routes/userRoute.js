@@ -11,7 +11,7 @@ userRouter.use(authenticationHandler)
 userRouter.get('/me', me);
 userRouter.get('/profile/:id',fetchUserById);
 userRouter.get('/all-profile',fetchUsers);
-userRouter.put('/profile/update/:userId',updateProfile);
+userRouter.put('/profile/update',updateProfile);
 // auth
 userRouter.use((req,res)=>{
     res.status(404).json({
