@@ -194,6 +194,24 @@ export const fetchForumById = expressAsyncHandler(async (req,res)=>{
 })
 
 // todo: update forum
+export const updateForum = expressAsyncHandler(async(req,res)=>{
+    const id = req.params.id;
+    if(!id){
+        res.status(400);
+        throw new Error('Forum Id must be passed');
+    }
+    const {name, imageUrl, description, terms} = req.body;
+    const forum = await Forum.update({name, imageUrl, description, terms},{
+        where:{id}
+    });
+    if(!forum){
+        res.status(404);
+        throw new Error('Forum not found');
+    }
+    res.status(200).json({
+        message: 'Forum updated successfully'
+    })
+})
 
 // Todo: disable forum
 
