@@ -21,7 +21,6 @@ if (config.use_env_variable) {
 } else {
   console.log(`config values: ${config.host}, ${config.dialect}, ${config.operatorsAliases}`);
   sequelize = new Sequelize(config.database, config.username, config.password, config);
-  
 }
 
 // Dynamically import models
@@ -54,12 +53,14 @@ const loadModels = async (dir = __dirname) => {
 };
 
 await loadModels();
+console.log(Object.keys(db));
 
 db.User = db.User || db['User'];
 db.Category = db.Category || db['Category'];
 db.CategoryAssociation = db.CategoryAssociation || db['CategoryAssociation'];
 db.Forum = db.Forum || db['Forum'];
 db.ForumCategory = db.ForumCategory || db['ForumCategory'];
+db.ForumMember = db.ForumMember || db['ForumMember'];
 
 db.User.belongsToMany(db.Category, {
   through: db.CategoryAssociation,
@@ -87,9 +88,18 @@ db.Category.belongsToMany(db.Forum, {
   otherKey: 'forumId',
   as: 'forums',
 });
+
+// db.Forum.belongsToMany(db.User, {
+//   through: db.ForumMember,
+//   foreignKey: 'forumId',
+//   otherKey: 'userId',
+//   as: 'members',
+// });
+
+db.ForumMember.belongsTo(db.User, { foreignKey: 'userId', as: 'user' });
+
 db.Forum.belongsTo(db.User, { foreignKey: 'createdBy', as: 'creator' });
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
-
 
 export default db;

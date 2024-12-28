@@ -2,7 +2,6 @@ import { DataTypes, Model } from "sequelize";
 
 export default (sequelize,DataTypes)=>{
     class Forum extends Model {
-
     }
 
     Forum.init(

@@ -6,10 +6,12 @@ import {
     fetchForumByCategory, fetchForumById, updateForum
 } from '../controller/forum/forumController.js';
 import { authenticationHandler } from '../middleware/authentication.js';
+import forumMemberRouter from "./forum/forumMemberRoute.js";
 
 const router = express.Router();
 
 router.use(authenticationHandler)
+router.use('/manage/member', forumMemberRouter);
 router.route('/').post(createForum).get(fetchAllForum);
 router.route('/my').get(fetchAllOwnedForum);
 router.route('/category').get(fetchForumByCategory);
