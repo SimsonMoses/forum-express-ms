@@ -47,20 +47,21 @@ export const removeMember = expressAsyncHandler(async (req, res) => {
         }
     })
 
-    if(forumMembers.filter(member=>member.userId === userId && member.role === 'admin')<1){
+    if (!isUserForumAdmin(forumMembers, userId)) {
         return res.status(403).json({
             message: 'You are not authorized to remove member',
-            data: forumMembers.filter(member=>member.userId === userId)
+            data: forumMembers.filter(member => member.userId === userId)
         })
     }
-    if(forumMembers.filter(member=> member.userId === memberId && member.role === 'admin').length>0){
+    // only admin can remove the member
+    if (isUserForumAdmin(forumMembers, memberId)) {
         return res.status(403).json({
             message: 'You are not authorized to remove admin',
-            data: forumMembers.filter(member=> member.userId === memberId)
+            data: forumMembers.filter(member => member.userId === memberId)
         })
     }
     const deletedCount = await ForumMember.destroy({
-        where:{
+        where: {
             userId: memberId,
             forumId: forumId
         }
@@ -71,11 +72,62 @@ export const removeMember = expressAsyncHandler(async (req, res) => {
     }
     return res.status(200).json({
         message: 'user deleted successfully',
-        data: deletedCount!==0
+        data: deletedCount !== 0
     })
 })
 
 // TODO: force update the member ROLE
+export const updateMemberRole = expressAsyncHandler(async (req, res) => {
+    const {userId} = req.user;
+    const {memberId, forumId, role} = req.body;
+    const forum = await isForumExist(forumId);
+    const forumMembers = await ForumMember.findAll({
+        where: {
+            userId: {
+                [Op.in]: [userId, memberId]
+            },
+            forumId: forumId
+        }
+    })
+    // TODO: make a reusable function to check if the user is admin
+    if(!forumMembers){
+        res.status(404);
+        throw new Error('Forum member not found');
+    }
+    if(!isUserForumAdmin(forumMembers,userId)){
+        return res.status(403).json({
+            message: 'You are not authorized to update member',
+        })
+    }
+    let userToUpdate = forumMembers.filter(member=>member.userId === memberId)[0];
+    userToUpdate.role = role;
+    userToUpdate = await ForumMember.update({role},{
+        where:{
+            userId: memberId,
+            forumId: forumId
+        }
+    })
+    return res.status(200).json({
+        message: 'Forum member updated successfully',
+        data: userToUpdate
+    })
+
+})
+
+const isForumExist = async (forumId) => {
+    const forum = await Forum.findOne({
+        where: {
+            id: forumId
+        }
+    })
+    if (!forum) {
+        throw new Error('Forum Not Found');
+    }
+    return forum;
+}
+const isUserForumAdmin = (forumMembers,userId)=>{
+    return forumMembers.filter(member=>member.userId === userId && member.role === 'admin').length > 0;
+}
 
 // TODO: request user to join forum
 
