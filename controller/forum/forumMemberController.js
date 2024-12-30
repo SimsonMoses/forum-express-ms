@@ -134,6 +134,23 @@ const isUserForumAdmin = (forumMembers,userId)=>{
 // TODO: ACTION(approved | reject) user to join forumd
 
 // TODO: get all forum members by forum id
+export const getAllForumMembers = expressAsyncHandler(async (req,res)=>{
+    const {forumId} = req.query;
+    if(!forumId){
+        res.status(400);
+        throw new Error('Forum Id must be passed');
+    }
+    // TODO: check if the forum exist
+    const forumMembers = await ForumMember.findAll({
+        where:{
+            forumId
+        }
+    })
+    res.status(200).json({
+        message: 'Forum members retrieved successfully',
+        data: forumMembers
+    })
+})
 
 // TODO: get all member to invite to forum (exclude the (current | requested | invited) members)
 
