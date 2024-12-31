@@ -3,7 +3,7 @@ import db from "../../models/index.js";
 import {Op} from "sequelize";
 
 
-const {User, sequelize, Forum, ForumMember} = db;
+const {User, sequelize, Forum, ForumMember,ForumMemberRequest} = db;
 
 // TODO: force add the member
 export const addForumMember = expressAsyncHandler(async (req, res) => {
@@ -128,8 +128,44 @@ const isForumExist = async (forumId) => {
 const isUserForumAdmin = (forumMembers,userId)=>{
     return forumMembers.filter(member=>member.userId === userId && member.role === 'admin').length > 0;
 }
+// TODO: private function to check isUserForumMember
+const isUserForumMember = async (forumId,userId)=>{
+    const forumMember = await ForumMember.findOne({
+        where:{
+            userId,
+            forumId
+        }
+    })
+    return forumMember;
+}
 
 // TODO: request user to join forum
+export const requestToJoinForum = expressAsyncHandler(async (req,res)=>{
+    const {userId,forumId,requestType} = req.body;
+    if(!userId || !forumId || !requestType){
+        res.status(400);
+        throw new Error('User Id, Forum Id and Request Type must be passed');
+    }
+    // todo: check if the user is already a member
+
+    const forumMemberRequest = await ForumMemberRequest.findOne({
+        userId,
+        forumId,
+    })
+    if(forumMemberRequest){
+        res.status(400);
+        throw new Error(`${forumMemberRequest.requestType} Request already exist`);
+    }
+    const newRequest = await ForumMemberRequest.create({userId,forumId,requestType});
+    if(!newRequest){
+        res.status(400);
+        throw new Error('Failed to request to join forum');
+    }
+    res.status(200).json({
+        message: 'Request to join forum sent successfully'
+    })
+
+})
 
 // TODO: ACTION(approved | reject) user to join forumd
 

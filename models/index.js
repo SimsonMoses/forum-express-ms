@@ -61,7 +61,7 @@ db.CategoryAssociation = db.CategoryAssociation || db['CategoryAssociation'];
 db.Forum = db.Forum || db['Forum'];
 db.ForumCategory = db.ForumCategory || db['ForumCategory'];
 db.ForumMember = db.ForumMember || db['ForumMember'];
-
+db.ForumMemberRequest = db.ForumMemberRequest || db['ForumMemberRequest'];
 db.User.belongsToMany(db.Category, {
   through: db.CategoryAssociation,
   foreignKey: 'userId',
@@ -97,8 +97,11 @@ db.Category.belongsToMany(db.Forum, {
 // });
 
 db.ForumMember.belongsTo(db.User, { foreignKey: 'userId', as: 'user' });
-
 db.Forum.belongsTo(db.User, { foreignKey: 'createdBy', as: 'creator' });
+
+db.ForumMemberRequest.belongsTo(db.User, { foreignKey: 'userId', as: 'user' });
+db.ForumMemberRequest.belongsTo(db.Forum,{foreignKey:'forumId', as:'forum'});
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
