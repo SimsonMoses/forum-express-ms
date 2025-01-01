@@ -167,7 +167,50 @@ export const requestToJoinForum = expressAsyncHandler(async (req,res)=>{
 
 })
 
-// TODO: ACTION(approved | reject) user to join forumd
+// TODO: ACTION(approved | reject) user to join forum
+export const actionToJoinForum = expressAsyncHandler(async (req,res)=>{
+    const {userId} = req.user;
+    const {memberId,forumId,action} = req.body;
+    const forum = await isForumExist(forumId);
+    // TODO: Check current user forum admin
+    const forumMemberRequest = await ForumMemberRequest.findOne({
+        where:{
+            userId: memberId,
+            forumId
+        }
+    })
+    if(!forumMemberRequest){
+        res.status(404);
+        throw new Error('Forum Member Request not found');
+    }
+    if(forumMemberRequest.status !== 'pending'){
+        res.status(400);
+        throw new Error('Request already processed');
+    }
+    if (action === 'approve'){
+        const forumMember = await ForumMember.create({
+            userId: memberId,
+            forumId,
+            role: 'member',
+            status: 'active'
+        })
+        if(!forumMember){
+            res.status(400);
+            throw new Error('Failed to approve member');
+        }
+    }
+    forumMemberRequest.status = action === 'approve' ? 'accepted' : 'rejected';
+    await ForumMemberRequest.update({status: forumMemberRequest.status},{
+        where:{
+            userId: memberId,
+            forumId
+        }
+    })
+    return res.status(200).json({
+        message: 'Request processed successfully',
+        data: forumMemberRequest
+    })
+})
 
 // TODO: get all forum members by forum id
 export const getAllForumMembers = expressAsyncHandler(async (req,res)=>{
