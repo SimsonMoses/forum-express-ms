@@ -156,7 +156,7 @@ export const requestToJoinForum = expressAsyncHandler(async (req,res)=>{
         res.status(400);
         throw new Error(`${forumMemberRequest.requestType} Request already exist`);
     }
-    const newRequest = await ForumMemberRequest.create({userId,forumId,requestType});
+    const newRequest = await ForumMemberRequest.create({userId,forumId,requestType,status:'pending'});
     if(!newRequest){
         res.status(400);
         throw new Error('Failed to request to join forum');
@@ -172,7 +172,6 @@ export const actionToJoinForum = expressAsyncHandler(async (req,res)=>{
     const {userId} = req.user;
     const {memberId,forumId,action} = req.body;
     const forum = await isForumExist(forumId);
-    // TODO: Check current user forum admin
     const forumMemberRequest = await ForumMemberRequest.findOne({
         where:{
             userId: memberId,
@@ -187,7 +186,7 @@ export const actionToJoinForum = expressAsyncHandler(async (req,res)=>{
         res.status(400);
         throw new Error('Request already processed');
     }
-    if (action === 'approve'){
+    if (action === 'approved'){
         const forumMember = await ForumMember.create({
             userId: memberId,
             forumId,
@@ -208,7 +207,7 @@ export const actionToJoinForum = expressAsyncHandler(async (req,res)=>{
     })
     return res.status(200).json({
         message: 'Request processed successfully',
-        data: forumMemberRequest
+        data: 'success'
     })
 })
 
@@ -232,6 +231,40 @@ export const getAllForumMembers = expressAsyncHandler(async (req,res)=>{
 })
 
 // TODO: get all member to invite to forum (exclude the (current | requested | invited) members)
+export const getAllMemberToInvite = expressAsyncHandler(async (req,res)=>{
+    const {forumId,limit='10',offset='0'} = req.query;
+    if(!forumId){
+        res.status(400);
+        throw new Error('Forum Id must be passed');
+    }
+    const forumMembers = await ForumMember.findAll({
+        where:{
+            forumId
+        }
+    })
+    const forumMemberRequests = await ForumMemberRequest.findAll({
+        where:{
+            forumId
+        }
+    })
+    const excludedMembersId = forumMembers.map(member=>member.userId);
+    const excludedRequestsId = forumMemberRequests.map(request=>request.userId);
+    const excludedIds = [...excludedMembersId,...excludedRequestsId];
+    const users = await User.findAll({
+        where:{
+            id:{
+                [Op.notIn]: excludedIds
+            }
+        },
+        limit: +limit,
+        offset: +offset
+    })
+    res.status(200).json({
+        message: 'Members retrieved successfully',
+        data: users
+    })
+
+})
 
 // TODO: status to request | invite member
 
