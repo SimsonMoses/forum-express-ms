@@ -34,6 +34,10 @@ export default (sequelize, DataTypes)=>{
         isLocked:{
             type:DataTypes.BOOLEAN,
             defaultValue:false
+        },
+        files:{
+            type:DataTypes.JSON,
+            defaultValue:[]
         }
     },{
         sequelize,

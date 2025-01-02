@@ -268,3 +268,8 @@ export const getAllMemberToInvite = expressAsyncHandler(async (req,res)=>{
 
 // TODO: status to request | invite member
 
+
+// TODO: get all joined forum by user
+
+// TODO: get all request forum by user
+
