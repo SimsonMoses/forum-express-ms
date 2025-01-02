@@ -134,7 +134,7 @@ const convertForumResponse = (forum) => {
  * Data Transfer Method to restrict the data to be sent to the client
  */
 
-const convertForumResponses = (forums) => {
+export const convertForumResponses = (forums) => {
     return forums.map(forum => convertForumResponse(forum))
 }
 

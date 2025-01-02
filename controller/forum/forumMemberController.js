@@ -1,6 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import db from "../../models/index.js";
 import {Op} from "sequelize";
+import {convertForumResponses} from "./forumController.js";
 
 
 const {User, sequelize, Forum, ForumMember,ForumMemberRequest} = db;
@@ -270,6 +271,27 @@ export const getAllMemberToInvite = expressAsyncHandler(async (req,res)=>{
 
 
 // TODO: get all joined forum by user
+export const getJoinedForums = expressAsyncHandler(async (req,res)=>{
+    const {userId} = req.user;
+    const forumList = await ForumMember.findAll({
+        where:{
+            userId
+        }
+    })
+    const forumIds = forumList.map(f=>f.forumId);
+    const forums = await Forum.findAll({
+        where:{
+            id:{
+                [Op.in]: forumIds
+            }
+        }
+    })
+
+    res.status(200).json({
+        message: 'Forum retrieved successfully',
+        data: convertForumResponses(forums)
+    })
+})
 
 // TODO: get all request forum by user
 
