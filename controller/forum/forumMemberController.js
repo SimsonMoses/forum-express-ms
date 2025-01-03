@@ -126,11 +126,11 @@ const isForumExist = async (forumId) => {
     }
     return forum;
 }
-const isUserForumAdmin = (forumMembers,userId)=>{
+export const isUserForumAdmin = (forumMembers,userId)=>{
     return forumMembers.filter(member=>member.userId === userId && member.role === 'admin').length > 0;
 }
 // TODO: private function to check isUserForumMember
-const isUserForumMember = async (forumId,userId)=>{
+export const isUserForumMember = async (forumId,userId)=>{
     const forumMember = await ForumMember.findOne({
         where:{
             userId,
