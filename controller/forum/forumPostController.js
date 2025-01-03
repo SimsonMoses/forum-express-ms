@@ -1,7 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import db from "../../models/index.js";
 import {isUserForumMember} from "./forumMemberController.js";
-
+import {Op} from "sequelize";
 
 const {ForumPost} = db;
 
@@ -31,15 +31,23 @@ export const createForumPost = expressAsyncHandler(async (req, res) => {
 })
 
 export const fetchForumPosts = expressAsyncHandler(async (req,res)=>{
-    const {forumId} = req.query;
+    const {forumId,offset=0,limit=10,search=""} = req.query;
     if(!forumId){
         res.status(400);
         throw new Error('Forum Id must be passed');
     }
     const forumPosts = await ForumPost.findAll({
         where:{
-            forumId
-        }
+            forumId,
+            title:{
+                [Op.like]: `%${search.toLowerCase()}%`,
+            },
+        },
+        order: [
+            ['createdAt', 'DESC'],
+        ],
+        offset: +offset,
+        limit: +limit
     })
 
     res.status(200).json({
