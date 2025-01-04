@@ -139,6 +139,15 @@ export const isUserForumMember = async (forumId,userId)=>{
     })
     return forumMember;
 }
+export const isForumAdmin = async (forumId,userId)=>{
+    const forumMember = await ForumMember.findOne({
+        where:{
+            userId,
+            forumId
+        }
+    })
+    return forumMember.role === 'admin';
+}
 
 // TODO: request user to join forum
 export const requestToJoinForum = expressAsyncHandler(async (req,res)=>{

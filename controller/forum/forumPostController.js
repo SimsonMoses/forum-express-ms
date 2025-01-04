@@ -1,6 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
 import db from "../../models/index.js";
-import {isUserForumMember} from "./forumMemberController.js";
+import {isForumAdmin, isUserForumAdmin, isUserForumMember} from "./forumMemberController.js";
 import {Op} from "sequelize";
 
 const {ForumPost} = db;
@@ -69,3 +69,36 @@ const convertForumPostResponse = (forumPost)=>{
 const convertForumPostsResponses = (forumPosts)=>{
     return forumPosts.map(forumPost=>convertForumPostResponse(forumPost));
 }
+
+// TODO: update forum post
+export const updateForumPost = expressAsyncHandler(async (req,res)=>{
+    const {userId} = req.user;
+    const {forumId,postId,title,content,files} = req.body;
+    // check if user is a member of the forum
+    const forumMember = await isForumAdmin(forumId,userId);
+    const postData = await ForumPost.findOne({
+        where:{
+            id:postId,
+            userId:userId,
+        }
+    })
+    if (!forumMember || !postData) {
+        res.status(403);
+        throw new Error('You are not allow to update the forum');
+    }
+    let post = await ForumPost.update({id:postId,title,content,files},{
+        where:{
+            id:postId
+        }
+    })
+    if(!post){
+        res.status(400);
+        throw new Error('Failed to update forum post');
+    }
+    return res.status(200).json({
+        message: 'Forum posts updated successfully',
+        data: convertForumPostResponse(post)
+    })
+})
+
+// TODO: delete forum post
