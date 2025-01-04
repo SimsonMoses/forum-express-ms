@@ -102,3 +102,32 @@ export const updateForumPost = expressAsyncHandler(async (req,res)=>{
 })
 
 // TODO: delete forum post
+export const deleteForumPost = expressAsyncHandler(async (req,res)=>{
+    const {userId} = req.user;
+    const {forumId,postId} = req.body;
+    const forumAdmin = await isForumAdmin(forumId,userId);
+    const postData = await ForumPost.findOne({
+        where:{
+            id:postId
+        }
+    })
+    if(!postData){
+        return res.status(204).json({
+            message: 'Forum post does not exists'
+        })
+    }
+    if(!forumAdmin || postData.userId !== userId){
+        res.status(403);
+        throw new Error('You are not authorized to delete the post');
+    }
+    const post = await ForumPost.destroy({
+        where:{
+            id:postId
+        }
+    })
+    if(!post){
+        res.status(400);
+        throw new Error('Failed to delete forum post');
+    }
+    return res.status(204);
+})
