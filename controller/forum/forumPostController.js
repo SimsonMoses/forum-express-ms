@@ -2,6 +2,7 @@ import expressAsyncHandler from "express-async-handler";
 import db from "../../models/index.js";
 import {isForumAdmin, isUserForumAdmin, isUserForumMember} from "./forumMemberController.js";
 import {Op} from "sequelize";
+import {getPostsLikesCountByIds} from "./postLikeController.js";
 
 const {ForumPost} = db;
 
@@ -36,7 +37,7 @@ export const fetchForumPosts = expressAsyncHandler(async (req,res)=>{
         res.status(400);
         throw new Error('Forum Id must be passed');
     }
-    const forumPosts = await ForumPost.findAll({
+    let forumPosts = await ForumPost.findAll({
         where:{
             forumId,
             title:{
@@ -49,10 +50,22 @@ export const fetchForumPosts = expressAsyncHandler(async (req,res)=>{
         offset: +offset,
         limit: +limit
     })
+    console.log(forumPosts);
+    let forumPostLikeCount = await getPostsLikesCountByIds(forumPosts.map(post=>post.id));
+    console.log("forumPostLikeCount:", forumPostLikeCount);
+    console.log("forumPosts:", forumPosts.map(post => post.id));
+    forumPosts = forumPosts.map(post=>{
+        const like = forumPostLikeCount.find(like=>like.dataValues.postId === post.dataValues.id);
+        return {
+            ...post.dataValues,
+            likeCount: like ? like.dataValues.count : 0
+        }
+    })
+    console.log(forumPosts);
 
     res.status(200).json({
         message: 'Forum posts retrieved successfully',
-        data: convertForumPostsResponses(forumPosts) // dto conversion needed
+        data: convertForumPostsResponses(forumPosts), // dto conversion needed
     })
 })
 
@@ -64,6 +77,7 @@ const convertForumPostResponse = (forumPost)=>{
         isPinned: forumPost.isPinned,
         files: forumPost.files,
         createdAt: forumPost.createdAt,
+        likeCount: forumPost.likeCount,
     }
 }
 const convertForumPostsResponses = (forumPosts)=>{
