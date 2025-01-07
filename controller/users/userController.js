@@ -7,6 +7,8 @@ import category from '../../models/category.js';
 const { User, sequelize,Category } = db;
 
 export const createUser = expressAsyncHandler(async (req, res) => {
+    console.log(`Request body: `+req.body);
+    
     const { name, email, password } = req.body;
     const user = await User.create({
         name, email, password
