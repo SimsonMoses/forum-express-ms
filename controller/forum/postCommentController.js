@@ -109,3 +109,22 @@ export const updatePostComment = expressAsyncHandler(async (req, res) => {
 })
 
 // TODO: delete comment
+export const deletePostComment = expressAsyncHandler(async (req,res)=>{
+    const {userId} = req.user;
+    const {commentId} = req.query;
+    if(!commentId){
+        throw new Error('Comment Id must be passed')
+    }
+    const comment = await PostComment.destroy({
+        where:{
+            id:commentId,
+            userId,
+        }
+    })
+    if(!comment){
+        throw new Error('Failed to delete the comment')
+    }
+    return res.status(200).json({
+        message: 'Comment deleted successfully'
+    })
+})
