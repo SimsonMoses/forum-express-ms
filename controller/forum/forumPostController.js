@@ -37,7 +37,7 @@ export const fetchForumPosts = expressAsyncHandler(async (req,res)=>{
         res.status(400);
         throw new Error('Forum Id must be passed');
     }
-    let forumPosts = await ForumPost.findAll({
+    let forumPosts = await ForumPost.findAndCountAll({
         where:{
             forumId,
             title:{
@@ -50,11 +50,11 @@ export const fetchForumPosts = expressAsyncHandler(async (req,res)=>{
         offset: +offset,
         limit: +limit
     })
-    console.log(forumPosts);
-    let forumPostLikeCount = await getPostsLikesCountByIds(forumPosts.map(post=>post.id));
+    console.log(forumPosts.rows);
+    let forumPostLikeCount = await getPostsLikesCountByIds(forumPosts.rows.map(post=>post.id));
     console.log("forumPostLikeCount:", forumPostLikeCount);
-    console.log("forumPosts:", forumPosts.map(post => post.id));
-    forumPosts = forumPosts.map(post=>{
+    console.log("forumPosts:", forumPosts.rows.map(post => post.id));
+    let forumPostDate = forumPosts.rows.map(post=>{
         const like = forumPostLikeCount.find(like=>like.dataValues.postId === post.dataValues.id);
         return {
             ...post.dataValues,
@@ -65,7 +65,8 @@ export const fetchForumPosts = expressAsyncHandler(async (req,res)=>{
 
     res.status(200).json({
         message: 'Forum posts retrieved successfully',
-        data: convertForumPostsResponses(forumPosts), // dto conversion needed
+        total: forumPosts.count,
+        data: convertForumPostsResponses(forumPostDate), // dto conversion needed
     })
 })
 

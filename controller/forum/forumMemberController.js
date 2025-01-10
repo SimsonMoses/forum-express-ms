@@ -223,20 +223,23 @@ export const actionToJoinForum = expressAsyncHandler(async (req,res)=>{
 
 // TODO: get all forum members by forum id
 export const getAllForumMembers = expressAsyncHandler(async (req,res)=>{
-    const {forumId} = req.query;
+    const {forumId,limit='10',offset='0'} = req.query;
     if(!forumId){
         res.status(400);
         throw new Error('Forum Id must be passed');
     }
     // TODO: check if the forum exist
-    const forumMembers = await ForumMember.findAll({
+    const forumMembers = await ForumMember.findAndCountAll({
         where:{
             forumId
-        }
+        },
+        limit: +limit,
+        offset: +offset
     })
     res.status(200).json({
         message: 'Forum members retrieved successfully',
-        data: forumMembers
+        total: forumMembers.count,
+        data: forumMembers.rows
     })
 })
 
@@ -260,7 +263,7 @@ export const getAllMemberToInvite = expressAsyncHandler(async (req,res)=>{
     const excludedMembersId = forumMembers.map(member=>member.userId);
     const excludedRequestsId = forumMemberRequests.map(request=>request.userId);
     const excludedIds = [...excludedMembersId,...excludedRequestsId];
-    const users = await User.findAll({
+    const users = await User.findAndCountAll({
         where:{
             id:{
                 [Op.notIn]: excludedIds
@@ -271,7 +274,8 @@ export const getAllMemberToInvite = expressAsyncHandler(async (req,res)=>{
     })
     res.status(200).json({
         message: 'Members retrieved successfully',
-        data: users
+        total: users.count,
+        data: users.rows
     })
 
 })
@@ -281,24 +285,27 @@ export const getAllMemberToInvite = expressAsyncHandler(async (req,res)=>{
 
 // TODO: get all joined forum by user
 export const getJoinedForums = expressAsyncHandler(async (req,res)=>{
-    const {userId} = req.user;
+    const {userId,limit='10',offset='0'} = req.user;
     const forumList = await ForumMember.findAll({
         where:{
             userId
         }
     })
     const forumIds = forumList.map(f=>f.forumId);
-    const forums = await Forum.findAll({
+    const forums = await Forum.findAndCountAll({
         where:{
             id:{
                 [Op.in]: forumIds
             }
-        }
+        },
+        limit: +limit,
+        offset: +offset
     })
 
     res.status(200).json({
         message: 'Forum retrieved successfully',
-        data: convertForumResponses(forums)
+        total: forums.count,
+        data: convertForumResponses(forums.rows)
     })
 })
 
