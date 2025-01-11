@@ -8,21 +8,30 @@ const {PostLike, ForumPost, sequelize} = db;
 
 export const like = expressAsyncHandler(async (req, res) => {
     const {userId} = req.user;
-    const {postId, like} = req.body;
+    const {postId,commentId, like, categoryType} = req.body;
     const post = await ForumPost.findOne({
         where: {
             id: postId
         }
     })
+    console.log('categoryType',categoryType);
+    console.log(categoryType !== 'POST' && categoryType !== 'COMMENT');
+    if(categoryType !== 'POST' && categoryType !== 'COMMENT'){
+        res.status(400);
+        throw new Error('Invalid category type');
+    }
+    const categoryBasedIdType = categoryType === 'POST' ? {postId:postId} : {commentId:commentId};
     if (!post) {
         res.status(400);
         throw new Error('Post not found');
     }
+
     if (like === false) {
         const likeData = await PostLike.destroy({
             where: {
-                postId,
-                userId
+                ...categoryBasedIdType,
+                userId,
+                categoryType: categoryType
             }
         })
         if (!likeData) {
@@ -35,11 +44,11 @@ export const like = expressAsyncHandler(async (req, res) => {
     }
     const [likeData, created] = await PostLike.findOrCreate({
         where: {
-            postId,
-            userId
+            ...categoryBasedIdType,
+            userId,
+            categoryType: categoryType
         },
         defaults: {
-            postId,
             userId
         }
     });
@@ -52,6 +61,10 @@ export const like = expressAsyncHandler(async (req, res) => {
         data: 'success'
     })
 })
+
+const createLike = async (req,res)=>{
+
+}
 
 /** Get post likes count for multiple posts
  * @param postIds
