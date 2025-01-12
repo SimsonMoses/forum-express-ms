@@ -47,7 +47,7 @@ export const getAllComments = expressAsyncHandler(async (req, res) => {
             message: 'Post Id must be passed'
         })
     }
-    const comments = await PostComment.findAll({
+    const comments = await PostComment.findAndCountAll({
         where: {
             postId
         },
@@ -59,7 +59,8 @@ export const getAllComments = expressAsyncHandler(async (req, res) => {
     })
     return res.status(200).json({
         message: 'Comments fetched successfully',
-        data: convertCommentResponses(comments)
+        total: comments.count,
+        data: convertCommentResponses(comments.rows)
     })
 })
 
