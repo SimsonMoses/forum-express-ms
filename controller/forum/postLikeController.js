@@ -83,6 +83,7 @@ export const getPostsLikesCountByIds = async (postIds)=>{
         },
         group:['postId']
     })
+    // TODO: need to implement for comments
     return postLikes;
 }
 
