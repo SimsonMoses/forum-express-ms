@@ -1,3 +1,4 @@
+import {Model} from "sequelize";
 
 
 export default (sequelize, DataTypes)=>{
@@ -7,7 +8,7 @@ export default (sequelize, DataTypes)=>{
 
     PostReport.init({
         id:{
-            type:DataTypes.Integer,
+            type:DataTypes.INTEGER,
             primaryKey:true,
             autoIncrement:true
         },

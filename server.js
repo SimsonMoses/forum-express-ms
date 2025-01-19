@@ -6,6 +6,7 @@ import { authenticationHandler } from './middleware/authentication.js';
 import importCategoriesFromExcel from './seeders/category/category_insertion.js';
 import { syncDatabase } from './seeders/category/index.js';
 import forumRouter from './routes/forumRoute.js';
+import fileRoute from "./routes/file/fileRoute.js";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get('/', (req, res) => {
 })
 app.use('/api/user', userRouter);
 app.use('/api/forum',forumRouter);
+app.use('/api/files',fileRoute)
 // POST MIDDLEWARE
 app.use(errorHandler);
 
