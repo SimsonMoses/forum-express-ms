@@ -41,9 +41,14 @@ export const login = expressAsyncHandler(async (req, res) => {
             userId: user.id
         }
     }, process.env.JWT_SECRET, { expiresIn: '1d' })
-    res.setHeader('token', `${token}`);
+    res.setHeader('token', `${token}`); 
     return res.status(200).json({
-        message: 'Login Success'
+        message: 'Login Success',
+        data:{
+            id: user.id,
+            name: user.name,
+            email: user.email
+        }
     })
 })
 
