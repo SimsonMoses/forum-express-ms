@@ -66,7 +66,8 @@ export const fetchAllForum = expressAsyncHandler(async (req, res) => {
     });
     res.status(200).json({
         message: 'forum retrived successfully',
-        data: convertForumResponses(forums)
+        data: convertForumResponses(forums),
+        status: "SUCCESS"
     })
 })
 
