@@ -28,4 +28,3 @@ export const fileUpload = expressAsyncHandler(async (req, res) => {
         res.status(500).json({ message: "Failed to upload file", error: err.message });
     }
 });
-

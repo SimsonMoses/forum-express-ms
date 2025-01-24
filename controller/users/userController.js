@@ -15,7 +15,8 @@ export const createUser = expressAsyncHandler(async (req, res) => {
     })
     return res.status(201).json({
         message: 'User Created',
-        id: user.id
+        id: user.id,
+        status: "SUCCESS"
     })
 })
 
@@ -48,7 +49,8 @@ export const login = expressAsyncHandler(async (req, res) => {
             id: user.id,
             name: user.name,
             email: user.email
-        }
+        },
+        status: "SUCCESS"
     })
 })
 
@@ -66,6 +68,7 @@ export const me = expressAsyncHandler(async (req, res) => {
     }
     res.status(200).json({
         message: 'User Data',
+        status: "SUCCESS",
         data: convertToUserResponse(user)
     })
 })
@@ -118,7 +121,8 @@ export const fetchUserById = expressAsyncHandler(async (req, res) => {
 
     res.status(200).json({
         message: 'User Data',
-        data: convertToUserResponse(user)
+        data: convertToUserResponse(user),
+        status: "SUCCESS"
     })
 })
 
