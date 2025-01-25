@@ -1,45 +1,45 @@
-import { DataTypes, Model } from "sequelize";
+import {Model} from "sequelize";
 
-export default (sequelize,DataTypes)=>{
+export default (sequelize, DataTypes) => {
     class Forum extends Model {
     }
 
     Forum.init(
         {
-            id:{
+            id: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true
             },
-            name:{
+            name: {
                 type: DataTypes.STRING,
             },
-            imageUrl:{
+            imageUrl: {
                 type: DataTypes.STRING
             },
-            description:{
+            description: {
                 type: DataTypes.STRING,
                 length: 10000
             },
-            status:{
+            status: {
                 type: DataTypes.STRING,
-                enum: ['in_active','active']
+                enum: ['in_active', 'active']
             },
-            terms:{
+            terms: {
                 type: DataTypes.STRING // terms and condition url
             },
-            createdBy:{
+            createdBy: {
                 type: DataTypes.INTEGER,
-                references:{
+                references: {
                     model: 'users',
                     key: 'id'
                 }
             }
-        },{
+        }, {
             sequelize,
-            timestamps:true,
-            modelName:"Forum",
-            tableName:'forum',
+            timestamps: true,
+            modelName: "Forum",
+            tableName: 'forum',
         }
     )
 
