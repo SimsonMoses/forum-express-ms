@@ -1,10 +1,10 @@
 import express from "express";
-import {createPost} from "../../controller/public/PostController.js";
+import {createPost, getAllPosts} from "../../controller/public/PostController.js";
 import {authenticationHandler} from "../../middleware/authentication.js";
 
 const router = express.Router();
 
 router.use(authenticationHandler)
-router.post("/", createPost);
+router.route("/").post(createPost).get(getAllPosts);
 
 export default router;
