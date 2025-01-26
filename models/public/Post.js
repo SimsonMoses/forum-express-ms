@@ -38,8 +38,8 @@ export default (sequelize, DataTypes) => {
     }, {
         sequelize,
         timestamps: true,
-        modelName: 'ForumPost',
-        tableName: 'forum_posts'
+        modelName: 'Post',
+        tableName: 'posts'
     })
     return Post;
 }

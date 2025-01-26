@@ -29,3 +29,13 @@ export const createPost = expressAsyncHandler(async (req, res) => {
         data: post.id
     })
 })
+
+export const getAllPosts = expressAsyncHandler(async (req, res) => {
+    const posts = await Post.findAll({
+        order: [['createdAt', 'DESC']],
+    });
+    return res.status(200).json({
+        message: 'All Posts',
+        data: posts
+    })
+});
