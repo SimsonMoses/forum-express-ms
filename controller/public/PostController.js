@@ -39,3 +39,31 @@ export const getAllPosts = expressAsyncHandler(async (req, res) => {
         data: posts
     })
 });
+
+export const updatePost = expressAsyncHandler(async (req, res) => {
+    const {userId} = req.user;
+    const {postId, title, content, files} = req.body;
+    if (!postId) {
+        res.status(400);
+        throw new Error('PostId must be passed');
+    }
+    var post = await Post.findOne({
+        where: {
+            id: postId,
+            userId
+        }
+    });
+    if (!post) {
+        res.status(400);
+        throw new Error('Post not found');
+    }
+    post.title = title;
+    post.content = content;
+    post.files = files;
+    post = await post.save();
+    return res.status(200).json({
+        message: 'Post updated successfully',
+        data: post.id,
+        status: "Success"
+    })
+});
