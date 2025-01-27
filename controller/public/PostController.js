@@ -66,4 +66,29 @@ export const updatePost = expressAsyncHandler(async (req, res) => {
         data: post.id,
         status: "Success"
     })
+
 });
+
+export const deletePost = expressAsyncHandler(async (req, res) => {
+    const {userId} = req.user;
+    const {postId} = req.query;
+    if (!postId) {
+        res.status(400);
+        throw new Error('PostId must be passed');
+    }
+    const post = await Post.findOne({
+        where: {
+            id: postId,
+            userId
+        }
+    });
+    if (!post) {
+        res.status(400);
+        throw new Error('Post not found');
+    }
+    await post.destroy();
+    return res.status(200).json({
+        message: 'Post deleted successfully',
+        data: post.id
+    })
+})
