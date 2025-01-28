@@ -14,6 +14,7 @@ userRouter.post('/login', login);
 // userRouter.put('/profile/update',updateProfile);
 // auth
 userRouter.use((req,res)=>{
+    console.log(`End Point: ${req.originalUrl} not found`);
     res.status(404).json({
         message: 'End point Not Found'
     })
