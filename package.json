@@ -10,7 +10,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SimsonMoses/forum-express-ms.git"
+    "url": "git+https://github.com/SimsonMoses/forum-express-ms.git",
+    "build": "webpack --config webpack.config.js",
+    "lint": "eslint . --ext .js"
   },
   "keywords": [
     "express",
@@ -24,17 +26,24 @@
   },
   "homepage": "https://github.com/SimsonMoses/forum-express-ms#readme",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.735.0",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-async-handler": "^1.2.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.5",
     "sequelize": "^6.37.5",
     "sequelize-cli": "^6.6.2",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "eslint": "^9.19.0",
+    "eslint-plugin-import": "^2.31.0",
+    "globals": "^15.14.0",
     "nodemon": "^3.1.9"
   }
 }

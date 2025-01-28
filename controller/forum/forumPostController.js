@@ -1,6 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
 import db from "../../models/index.js";
-import {isForumAdmin, isUserForumAdmin, isUserForumMember} from "./forumMemberController.js";
+import {isForumAdmin, isUserForumMember} from "./forumMemberController.js";
 import {Op} from "sequelize";
 import {getPostsLikesCountByIds} from "./postLikeController.js";
 

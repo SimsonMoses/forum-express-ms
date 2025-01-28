@@ -1,0 +1,2 @@
+# This is a comment is to validate the project with unused vars and unresolved vars
+npx eslint .

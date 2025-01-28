@@ -42,7 +42,7 @@ export const like = expressAsyncHandler(async (req, res) => {
             message: 'Post unliked successfully'
         })
     }
-    const [likeData, created] = await PostLike.findOrCreate({
+    const [created] = await PostLike.findOrCreate({
         where: {
             ...categoryBasedIdType,
             userId,
@@ -62,9 +62,9 @@ export const like = expressAsyncHandler(async (req, res) => {
     })
 })
 
-const createLike = async (req,res)=>{
-
-}
+// const createLike = async (req,res)=>{
+//
+// }
 
 /** Get post likes count for multiple posts
  * @param postIds

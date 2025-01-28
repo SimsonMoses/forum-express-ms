@@ -1,4 +1,4 @@
-import { DataTypes, Model, Sequelize } from 'sequelize';
+import {  Model } from 'sequelize';
 
 export default (sequelize,DataTypes)=>{
     class CategoryAssociation extends Model{
