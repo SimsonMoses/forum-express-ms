@@ -3,13 +3,12 @@ import db from '../../models/index.js';
 import path from 'path';
 import url from 'url';
 import { Sequelize } from 'sequelize';
-import category from '../../models/category.js';
 
 const importCategoriesFromExcel = async () => {
     console.log('Importing Categories');
     const __filename = url.fileURLToPath(import.meta.url)
     const __dirname = path.dirname(__filename)
-    const filePath = path.resolve('./forum.xlsx');
+    // const filePath = path.resolve('./forum.xlsx');
     try {
         let forumxlsxPath = path.resolve(__dirname, 'forum.xlsx');
         console.log(forumxlsxPath);

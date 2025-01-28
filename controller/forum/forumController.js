@@ -99,7 +99,9 @@ export const fetchAllOwnedForum = async (req, res) => {
                     }
                 ),
                 {createdBy: userId}
-            ]
+            ],
+            limit: +limit,
+            offset: +offset
         },
         include: [
             {
@@ -169,7 +171,7 @@ export const fetchForumByCategory = expressAsyncHandler(async (req, res) => {
 
 // todo: get forum by id
 export const fetchForumById = expressAsyncHandler(async (req,res)=>{
-    const {userId} = req.user;
+    // const {userId} = req.user;
     const id = req.params.id;
     if(!id){
         res.status(400)

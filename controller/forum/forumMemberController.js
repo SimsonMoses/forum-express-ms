@@ -4,7 +4,7 @@ import {Op} from "sequelize";
 import {convertForumResponses} from "./forumController.js";
 
 
-const {User, sequelize, Forum, ForumMember,ForumMemberRequest} = db;
+const {User, Forum, ForumMember,ForumMemberRequest} = db;
 
 // TODO: force add the member
 export const addForumMember = expressAsyncHandler(async (req, res) => {
@@ -81,7 +81,7 @@ export const removeMember = expressAsyncHandler(async (req, res) => {
 export const updateMemberRole = expressAsyncHandler(async (req, res) => {
     const {userId} = req.user;
     const {memberId, forumId, role} = req.body;
-    const forum = await isForumExist(forumId);
+    // const forum = await isForumExist(forumId);
     const forumMembers = await ForumMember.findAll({
         where: {
             userId: {
@@ -115,17 +115,17 @@ export const updateMemberRole = expressAsyncHandler(async (req, res) => {
 
 })
 
-const isForumExist = async (forumId) => {
-    const forum = await Forum.findOne({
-        where: {
-            id: forumId
-        }
-    })
-    if (!forum) {
-        throw new Error('Forum Not Found');
-    }
-    return forum;
-}
+// const isForumExist = async (forumId) => {
+//     const forum = await Forum.findOne({
+//         where: {
+//             id: forumId
+//         }
+//     })
+//     if (!forum) {
+//         throw new Error('Forum Not Found');
+//     }
+//     return forum;
+// }
 export const isUserForumAdmin = (forumMembers,userId)=>{
     return forumMembers.filter(member=>member.userId === userId && member.role === 'admin').length > 0;
 }
@@ -179,9 +179,9 @@ export const requestToJoinForum = expressAsyncHandler(async (req,res)=>{
 
 // TODO: ACTION(approved | reject) user to join forum
 export const actionToJoinForum = expressAsyncHandler(async (req,res)=>{
-    const {userId} = req.user;
+    // const {userId} = req.user;
     const {memberId,forumId,action} = req.body;
-    const forum = await isForumExist(forumId);
+    // const forum = await isForumExist(forumId);
     const forumMemberRequest = await ForumMemberRequest.findOne({
         where:{
             userId: memberId,

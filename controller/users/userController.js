@@ -1,8 +1,6 @@
 import expressAsyncHandler from 'express-async-handler';
 import db from '../../models/index.js';
 import jwt from 'jsonwebtoken';
-import { Sequelize } from 'sequelize';
-import category from '../../models/category.js';
 
 const { User, sequelize,Category } = db;
 
@@ -150,7 +148,7 @@ export const fetchUsers = expressAsyncHandler(async (req, res) => {
 // TODO: UPDATE PROFILE
 export const updateProfile = expressAsyncHandler(async (req, res) => {
     const { id } = req.user;
-    const { name, email, avatar, categoryIds } = req.body;
+    const { name, avatar, categoryIds } = req.body;
     const user = await User.findOne({
         id
     })

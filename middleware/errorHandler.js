@@ -2,7 +2,7 @@
 /**
     Error handler middleware is used to catch any error that occurs in the application.
 **/
-export const errorHandler = (err,req,res,next)=>{
+export const errorHandler = (err,req,res)=>{
     console.error(err);
     console.log(`Error in error handler: ${err.name}`);
     let message;
