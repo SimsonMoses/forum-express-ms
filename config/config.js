@@ -3,10 +3,10 @@ import 'dotenv/config';
 export default{
   development: {
     username:  "root",
-    password:  "orOGJLhWedbGDTfOSTamjuRAsxnZAozs",
-    database: "forum",
-    host:  "junction.proxy.rlwy.net",
-    port: 48655,
+    password:  "root",
+    database: "forum_express",
+    host:  "127.0.0.1",
+    port: 3306,
     dialect: "mysql"
   },
   test: {
