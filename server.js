@@ -14,11 +14,11 @@ app.use(express.json());
 const port = process.env.PORT || 8080;
 
 // PRE MIDDLEWARE
-app.use(cors({
-    origin: '*', // Replace with your frontend's domain
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'], // Include Authorization
-}));
+// app.use(cors({
+//     origin: '*', // Replace with your frontend's domain
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//     allowedHeaders: ['Content-Type', 'Authorization'], // Include Authorization
+// }));
 
 // ROUTES
 app.get('/', (req, res) => {
