@@ -6,6 +6,7 @@ import {syncDatabase} from './seeders/category/index.js';
 import forumRouter from './routes/forumRoute.js';
 import fileRoute from "./routes/file/fileRoute.js";
 import publicRoute from "./routes/public/PublicRoute.js";
+import cors from "cors";
 
 const app = express();
 
@@ -13,6 +14,11 @@ app.use(express.json());
 const port = process.env.PORT || 8080;
 
 // PRE MIDDLEWARE
+app.use(cors({
+    origin: '*', // Replace with your frontend's domain
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'], // Include Authorization
+}));
 
 // ROUTES
 app.get('/', (req, res) => {
