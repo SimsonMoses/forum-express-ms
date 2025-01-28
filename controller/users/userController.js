@@ -8,6 +8,15 @@ export const createUser = expressAsyncHandler(async (req, res) => {
     console.log(`Request body: `+req.body);
     
     const { name, email, password } = req.body;
+    const existingUser = await User.findOne({
+        where: {
+            email
+        }
+    })
+    if(existingUser){
+        res.status(400)
+        throw new Error('User already exists');
+    }
     const user = await User.create({
         name, email, password
     })
