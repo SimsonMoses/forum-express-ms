@@ -6,6 +6,7 @@ import {syncDatabase} from './seeders/category/index.js';
 import forumRouter from './routes/forumRoute.js';
 import fileRoute from "./routes/file/fileRoute.js";
 import publicRoute from "./routes/public/PublicRoute.js";
+import cors from "cors";
 
 const app = express();
 
