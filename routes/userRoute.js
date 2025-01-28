@@ -7,16 +7,16 @@ const userRouter = express.Router();
 
 userRouter.post('/register', createUser);
 userRouter.post('/login', login);
-// userRouter.use(authenticationHandler)
-// userRouter.get('/me', me);
-// userRouter.get('/profile/:id',fetchUserById);
-// userRouter.get('/all-profile',fetchUsers);
-// userRouter.put('/profile/update',updateProfile);
+userRouter.use(authenticationHandler)
+userRouter.get('/me', me);
+userRouter.get('/profile/:id',fetchUserById);
+userRouter.get('/all-profile',fetchUsers);
+userRouter.put('/profile/update',updateProfile);
 // auth
-userRouter.use((req,res)=>{
-    console.log(`End Point: ${req.originalUrl} not found`);
-    res.status(404).json({
-        message: 'End point Not Found'
-    })
-})
+// userRouter.use((req,res)=>{
+//     console.log(`End Point: ${req.originalUrl} not found`);
+//     res.status(404).json({
+//         message: 'End point Not Found'
+//     })
+// })
 export default userRouter;
