@@ -1,6 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 
 import db from "../../models/index.js";
+import {Op} from "sequelize";
 
 const {Post} = db;
 
@@ -31,8 +32,24 @@ export const createPost = expressAsyncHandler(async (req, res) => {
 })
 
 export const getAllPosts = expressAsyncHandler(async (req, res) => {
+    let {offset = 0, limit = 10, search} = req.query;
+
+    offset = parseInt(offset) || 0;
+    limit = parseInt(limit) || 10;
+    const searchQuery = search
+        ? {
+            [Op.or]: [
+                { title: { [Op.like]: `%${search.toLowerCase()}%` } },
+                { content: { [Op.like]: `%${search.toLowerCase()}%` } }
+            ]
+        }
+        : {};
+
     const posts = await Post.findAll({
+        where: searchQuery,
         order: [['createdAt', 'DESC']],
+        limit: +limit,
+        offset: offset*limit
     });
     return res.status(200).json({
         message: 'All Posts',
