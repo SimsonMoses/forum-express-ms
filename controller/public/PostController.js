@@ -36,6 +36,7 @@ export const getAllPosts = expressAsyncHandler(async (req, res) => {
     });
     return res.status(200).json({
         message: 'All Posts',
+        status: 'SUCCESS',
         data: posts
     })
 });

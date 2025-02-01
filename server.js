@@ -8,6 +8,7 @@ import fileRoute from "./routes/file/fileRoute.js";
 import publicRoute from "./routes/public/PublicRoute.js";
 import cors from "cors";
 import authRoute from "./routes/authRoute.js";
+import categoryRoute from "./routes/taxonomy/CategoryRoute.js";
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api/forum', forumRouter);
 app.use('/api/files', fileRoute);
 app.use('/api/public', publicRoute);
 app.use('/api/auth',authRoute);
+app.use('/api/taxonomy',categoryRoute)
 // POST MIDDLEWARE
 app.use(errorHandler);
 
