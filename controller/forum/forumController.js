@@ -20,6 +20,7 @@ export const createForum = expressAsyncHandler(async (req, res) => {
         name, imageUrl, description, terms, createdBy: userId
     })
     // category association
+    // TODO: validate the category
     const newAssociation = categoryIds.map(categoryId => {
         return {
             forumId: forum.id,
