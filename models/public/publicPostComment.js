@@ -2,11 +2,11 @@ import {Model} from "sequelize";
 
 
 export default (sequelize, DataTypes) => {
-    class PostComment extends Model {
+    class PublicPostComment extends Model {
 
     }
 
-    PostComment.init({
+    PublicPostComment.init({
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -24,11 +24,12 @@ export default (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         }
+        // TODO: add the emoji field
     }, {
         sequelize,
         timestamps: true,
-        modelName: 'PostComment',
-        tableName: 'post_comments'
+        modelName: 'PublicPostComment',
+        tableName: 'public_post_comments'
     })
-    return PostComment;
+    return PublicPostComment;
 }
